@@ -13,7 +13,10 @@ This is a simple todo service, following my version of clean architecture.
 - [ ] add metrics
 - [ ] can we make things dependant to the env like AleF was showing me?
 - [ ] dockerize
-
+- [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
+      maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that 
+      we know that is not going to throw errors because we already validated and checked that path?
+      The alternative is to move all the logic there (infra) and just pass (e.g. title) from the application to the infra
 
 ## Code structure
 

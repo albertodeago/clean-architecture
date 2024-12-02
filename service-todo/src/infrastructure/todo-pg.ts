@@ -11,13 +11,13 @@ const initPgTodo = ({}): TodoRepository => {
         createTodo: async (todo: DomainTodo) => {
             throw new Error("Not implemented");
         },
+        getTodo: async (id: DomainTodo["id"]) => {
+            throw new Error("Not implemented");
+        },
         updateTodo: async (id: DomainTodo["id"], todo: DomainTodo) => {
             throw new Error("Not implemented");
         },
         deleteTodo: async (id: DomainTodo["id"]) => {
-            throw new Error("Not implemented");
-        },
-        getTodo: async (id: DomainTodo["id"]) => {
             throw new Error("Not implemented");
         }
     }

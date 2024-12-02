@@ -24,21 +24,34 @@ const initMemoryTodoAdapter = (): TodoRepository => {
             console.log("[infrastructure][memory] listTodo");
             return todoList.map(mapMemoryTodoToDomain);
         },
-        createTodo: async (todo: DomainTodo) => {
+        createTodo: async (todo: { id: string, title: string }) => {
             console.log("[infrastructure][memory] createTodo", todo);
 
-            const memoryTodo = mapDomainTodoToMemory(todo);
+            const domainTodo = TodoFactory(todo);
+            const memoryTodo = mapDomainTodoToMemory(domainTodo);
             
             console.log("[infrastructure][memory] saved in memory", memoryTodo);
             todoList.push(memoryTodo);
             
             return mapMemoryTodoToDomain(memoryTodo);
         },
+        getTodo: async (id: DomainTodo["id"]) => {
+            console.log("[infrastructure][memory] getTodo", id);
+            const t = todoList.find((t) => t.id === id);
+            
+            if (!t) {
+                // TODO: is error handling correct here?
+                // it should be useless, if we reach here the getTodo should have thrown an error
+                throw new TodoNotFoundError("Todo not found");
+            }
+
+            console.log("[infrastructure][memory] found in memory", t);
+            return t;
+        },
         updateTodo: async (id: DomainTodo["id"], todo: DomainTodo) => {
             const t = todoList.find((t) => t.id === id);
             if (!t) {
-                // TODO: is error handling correct here?
-                throw new Error("Todo not found");
+                throw new TodoNotFoundError("Todo not found");
             }
 
             t.title = todo.title;
@@ -48,23 +61,12 @@ const initMemoryTodoAdapter = (): TodoRepository => {
         deleteTodo: async (id: DomainTodo["id"]) => {
             const i = todoList.findIndex((t) => t.id === id);
             if (i === -1) {
-                // TODO: is error handling correct here?
-                throw new Error("Todo not found");
-            }
-
-            todoList.splice(i, 1);
-        },
-        getTodo: async (id: DomainTodo["id"]) => {
-            console.log("[infrastructure][memory] getTodo", id);
-            const t = todoList.find((t) => t.id === id);
-            
-            if (!t) {
                 throw new TodoNotFoundError("Todo not found");
             }
 
-            console.log("[infrastructure][memory] found in memory", t);
-            return t;
-        }
+            const [deleted] = todoList.splice(i, 1);
+            return mapMemoryTodoToDomain(deleted);
+        },
     }
 }
 

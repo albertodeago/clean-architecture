@@ -7,11 +7,11 @@ import type { DomainTodo, TodoRepository } from "../domain/todo";
 
 
 interface TodoApplication {
-    createTodo: (todo: DomainTodo) => Promise<DomainTodo>;
+    createTodo: (todo: { id: string, title: string }) => Promise<DomainTodo>;
     listTodo: () => Promise<DomainTodo[]>;
     toggleTodoCompleted: (id: DomainTodo["id"]) => Promise<DomainTodo>;
     updateTodoTitle: (id: DomainTodo["id"], title: string) => Promise<DomainTodo>;
-    deleteTodo: (id: DomainTodo["id"]) => Promise<void>;
+    deleteTodo: (id: DomainTodo["id"]) => Promise<DomainTodo>;
     archiveCompletedTodos: () => Promise<void>;
 }
 
@@ -24,13 +24,13 @@ const initTodoApplication = ({ todoRepository }: { todoRepository: TodoRepositor
             console.log("[application][todo] listTodo");
             return await repository.listTodo();
         },
-        createTodo: async (todo: DomainTodo) => {
+        createTodo: async (todo: { id: string, title: string }) => {
             console.log("[application][todo] createTodo", todo);
             return await repository.createTodo(todo);
         },
-        
-        
         toggleTodoCompleted: async (id: DomainTodo["id"]) => {
+            // TODO: do we really need to get the todo first? check Readme, we should decide to do validation in one place, not half here
+            // and half in the repository implementation
             const todo = await repository.getTodo(id);
             return await repository.updateTodo(id, { ...todo, isCompleted: !todo.isCompleted });
         },
@@ -39,8 +39,9 @@ const initTodoApplication = ({ todoRepository }: { todoRepository: TodoRepositor
             return await repository.updateTodo(id, { ...todo, title });
         },
         deleteTodo: async (id: DomainTodo["id"]) => {
-            await repository.deleteTodo(id);
+            return await repository.deleteTodo(id);
         },
+
         archiveCompletedTodos: async () => {
             const todos = await repository.listTodo();
             const completedTodos = todos.filter((t) => t.isCompleted);
