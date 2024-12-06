@@ -98,6 +98,13 @@ export default [
                 "🔥 The `application` folder can only import from `domain`, `utils` and `config`. 🔥",
               allowImportsFrom: ["src/domain/**", "src/utils/**", "src/config/**"],
             },
+            
+            {
+              // test -> can import from everything
+              name: "Test folder",
+              pattern: "test/**",
+              allowImportsFrom: ["**"],
+            },
         
             // All files not specified in the rules are not allowed to import anything. Ignore all non-nested files in the `src` folder.
             {
