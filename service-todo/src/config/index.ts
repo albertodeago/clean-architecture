@@ -9,3 +9,5 @@ export const getConfig = () => {
         port: process.env.PORT || DEFAULT_PORT
     }
 }
+
+export type Config = ReturnType<typeof getConfig>;

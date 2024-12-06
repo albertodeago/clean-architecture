@@ -1,7 +1,8 @@
 import express from "express";
-import type { Express } from "express";
-import type { TodoApplication } from "../application/todo";
 import { TodoNotFoundError } from "../domain/errors";
+
+import type { TodoApplication } from "../application/todo";
+import type { Config } from "../config";
 
 // this module is responsible for handling http requests and responses
 // it should get a service as input, and return an express app that
@@ -9,7 +10,7 @@ import { TodoNotFoundError } from "../domain/errors";
 
 // here we should do specific http validation and checks
 
-const initHttpAdapter = ({ todoApplication }: { todoApplication: TodoApplication }): Express => {
+const initHttpAdapter = ({ todoApplication, config }: { todoApplication: TodoApplication, config: Config }): { run: () => void } => {
 
     const app = express();
     app.use(express.json());
@@ -66,7 +67,13 @@ const initHttpAdapter = ({ todoApplication }: { todoApplication: TodoApplication
         }
     });
 
-    return app;
+    return {
+        run: () => {
+            app.listen(config.port, () => {
+                console.log(`Server is running on port ${config.port}`);
+            });
+        }
+    };
 }
     
 export { initHttpAdapter }

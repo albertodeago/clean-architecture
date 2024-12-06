@@ -17,11 +17,9 @@ const main = async () => {
     const todoApplication = initTodoApplication({ todoRepository });
     
     // create other infrastructure, the one that needs the application
-    const httpAdapter = initHttpAdapter({ todoApplication });
+    const httpAdapter = initHttpAdapter({ todoApplication, config });
 
-    httpAdapter.listen(config.port, () => {
-        console.log(`Server is running on port ${config.port}`);
-    });
+    httpAdapter.run();
 }
 
 main();
