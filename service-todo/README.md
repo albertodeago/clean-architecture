@@ -5,13 +5,13 @@ This is a simple todo service, following my version of clean architecture.
 ## TODO
 
 - [x] fully implement CRUD and use-cases to see how it fits
-- [ ] add eslint and try to force project structure
-- [ ] would it be easier with Zod?
+- [x] add eslint and try to force project structure
+- [ ] add tests
 - [ ] add logs
 - [ ] handle errors
-- [ ] add tests
 - [ ] add observability
 - [ ] add metrics
+- [ ] would it be easier with Zod?
 - [ ] can we make things dependant to the env like AleF was showing me?
 - [ ] dockerize
 - [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
