@@ -8,7 +8,7 @@ const initPgTodo = ({}): TodoRepository => {
         listTodo: async () => {
             throw new Error("Not implemented");
         },
-        createTodo: async (todo: DomainTodo) => {
+        createTodo: async (todo: { id: string, title: string }) => {
             throw new Error("Not implemented");
         },
         getTodo: async (id: DomainTodo["id"]) => {
