@@ -1,6 +1,7 @@
 import type { Brand } from "../utils/types";
 import { InputParseError } from "./errors";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TodoBrand = Symbol("Todo");
 
 type Todo = {
