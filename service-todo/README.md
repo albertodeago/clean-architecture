@@ -4,8 +4,9 @@ This is a simple todo service, following my version of clean architecture.
 
 ## TODO
 
-- [ ] fully implement CRUD and use-cases to see how it fits
+- [x] fully implement CRUD and use-cases to see how it fits
 - [ ] add eslint and try to force project structure
+- [ ] would it be easier with Zod?
 - [ ] add logs
 - [ ] handle errors
 - [ ] add tests

@@ -5,6 +5,16 @@ import type { DomainTodo, TodoRepository } from "../domain/todo";
  * Application takes adapters as input and implements business logic (use cases)
  */
 
+/**
+ * Use cases:
+ * - create a Todo (title, isCompleted)
+ * - list all Todos
+ * - mark a Todo as completed / uncompleted
+ * - change a Todo title
+ * - delete a Todo
+ * - archive completed Todos
+ */
+
 
 interface TodoApplication {
     createTodo: (todo: { id: string, title: string }) => Promise<DomainTodo>;

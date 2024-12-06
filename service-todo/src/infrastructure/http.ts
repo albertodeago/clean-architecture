@@ -21,7 +21,6 @@ const initHttpAdapter = ({ todoApplication }: { todoApplication: TodoApplication
     });
 
     app.post("/todos", async (req, res) => {
-        // TODO: should we have the id as a path parameter? I should check what's the best practice for this
         console.log("[infrastructure][http] POST /todos", req.body);
         const todo = await todoApplication.createTodo(req.body);
         res.json(todo);
