@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsc --watch & nodemon dist/main.js",
+    "debug": "tsc --watch & LOG_LEVEL=debug nodemon dist/main.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "author": "",
   "license": "ISC",

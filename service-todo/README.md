@@ -6,8 +6,8 @@ This is a simple todo service, following my version of clean architecture.
 
 - [x] fully implement CRUD and use-cases to see how it fits
 - [x] add eslint and try to force project structure
-- [ ] add tests
-- [ ] add logs
+- [x] add unit tests
+- [x] add logs
 - [ ] handle errors
 - [ ] add observability
 - [ ] add metrics

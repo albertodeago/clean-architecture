@@ -1,7 +1,8 @@
-import type { DomainTodo, TodoRepository } from "../domain/todo";
-
-import { TodoFactory } from "../domain/todo";
 import { TodoNotFoundError } from "../domain/errors";
+import { TodoFactory } from "../domain/todo";
+
+import type { DomainTodo, TodoRepository } from "../domain/todo";
+import type { Logger } from "../utils/logger";
 
 /**
  * Infrastructure (adapters) is responsible for implementing a Port (interface between domain and outside world)
@@ -15,28 +16,28 @@ type MemoryTodo = DomainTodo & {
     _id: `${string}-${string}-${string}-${string}-${string}`;
 }
 
-const initMemoryTodoAdapter = (): TodoRepository => {
-
+const initMemoryTodoAdapter = ({ logger }: { logger: Logger }): TodoRepository => {
+    logger.info("initMemoryTodoAdapter");
     const todoList: MemoryTodo[] = [];
 
     return {
         listTodo: async () => {
-            console.log("[infrastructure][memory] listTodo");
+            logger.info("listTodo");
             return todoList.map(mapMemoryTodoToDomain);
         },
         createTodo: async (todo: { id: string, title: string }) => {
-            console.log("[infrastructure][memory] createTodo", todo);
+            logger.info("createTodo", todo);
 
             const domainTodo = TodoFactory(todo);
             const memoryTodo = mapDomainTodoToMemory(domainTodo);
             
-            console.log("[infrastructure][memory] saved in memory", memoryTodo);
+            logger.info("saved in memory", memoryTodo);
             todoList.push(memoryTodo);
             
             return mapMemoryTodoToDomain(memoryTodo);
         },
         getTodo: async (id: DomainTodo["id"]) => {
-            console.log("[infrastructure][memory] getTodo", id);
+            logger.info("getTodo", id);
             const t = todoList.find((t) => t.id === id);
             
             if (!t) {
@@ -45,7 +46,7 @@ const initMemoryTodoAdapter = (): TodoRepository => {
                 throw new TodoNotFoundError("Todo not found");
             }
 
-            console.log("[infrastructure][memory] found in memory", t);
+            logger.info("found in memory", t);
             return t;
         },
         updateTodo: async (id: DomainTodo["id"], todo: DomainTodo) => {

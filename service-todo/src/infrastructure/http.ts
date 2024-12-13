@@ -1,6 +1,8 @@
 import express from "express";
 import { TodoNotFoundError } from "../domain/errors";
 
+import type { Logger } from "../utils/logger";
+import type http from "http";
 import type { TodoApplication } from "../application/todo";
 import type { Config } from "../config";
 
@@ -10,24 +12,26 @@ import type { Config } from "../config";
 
 // here we should do specific http validation and checks
 
-const initHttpAdapter = ({ todoApplication, config }: { todoApplication: TodoApplication, config: Config }): { run: () => void } => {
-
+const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication: TodoApplication, config: Config, logger: Logger }): { run: () => void, stop: () => void } => {
+    logger.info("initHttpAdapter");
     const app = express();
+    let server: http.Server
     app.use(express.json());
 
     app.get("/todos", async (req, res) => {
-        console.log("[infrastructure][http] GET /todos");
+        logger.info("GET /todos");
         const todos = await todoApplication.listTodo();
         res.json(todos);
     });
 
     app.post("/todos", async (req, res) => {
-        console.log("[infrastructure][http] POST /todos", req.body);
+        logger.info("POST /todos", req.body);
         const todo = await todoApplication.createTodo(req.body);
         res.json(todo);
     });
 
     app.put("/todos/:id/toggle", async (req, res) => {
+        logger.info("PUT /todos/:id/toggle", req.params.id);
         try {
             const todo = await todoApplication.toggleTodoCompleted(req.params.id);
             res.json(todo);
@@ -41,7 +45,7 @@ const initHttpAdapter = ({ todoApplication, config }: { todoApplication: TodoApp
     });
 
     app.put("/todos/:id", async (req, res) => {
-        // should we have just 1 put method, where the user can edit the entire todo? Probably yes but this is a just an example
+        logger.info("PUT /todos/:id", req.params.id, req.body.title);
         try {
             const todo = await todoApplication.updateTodoTitle(req.params.id, req.body.title);
             res.json(todo);
@@ -55,6 +59,7 @@ const initHttpAdapter = ({ todoApplication, config }: { todoApplication: TodoApp
     });
 
     app.delete("/todos/:id", async (req, res) => {
+        logger.info("DELETE /todos/:id", req.params.id);
         try {
             const todo = await todoApplication.deleteTodo(req.params.id);
             res.json(todo);
@@ -69,9 +74,12 @@ const initHttpAdapter = ({ todoApplication, config }: { todoApplication: TodoApp
 
     return {
         run: () => {
-            app.listen(config.port, () => {
-                console.log(`Server is running on port ${config.port}`);
+            server = app.listen(config.port, () => {
+                logger.info(`Server is running on port ${config.port}`);
             });
+        },
+        stop: () => {
+            server?.close();
         }
     };
 }
