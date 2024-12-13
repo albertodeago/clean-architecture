@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { initTodoApplication, type TodoApplication } from "../../../src/application/todo";
+import { getLogger } from "../../../src/utils/logger";
+
 import type { TodoRepository } from "../../../src/domain/todo";
+
+const logger = getLogger("test", "error");
 
 const mockMemoryAdapter = {
     listTodo: vi.fn(),
@@ -14,7 +18,7 @@ describe("TodoApplication", () => {
     let todoApplication: TodoApplication;
 
     beforeEach(() => {
-        todoApplication = initTodoApplication({ todoRepository: mockMemoryAdapter });
+        todoApplication = initTodoApplication({ todoRepository: mockMemoryAdapter, logger });
     });
 
     it("creates todos using the repository", async () => {

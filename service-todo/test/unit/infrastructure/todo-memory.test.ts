@@ -2,12 +2,15 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { initMemoryTodoAdapter } from "../../../src/infrastructure/todo-memory";
 import { TodoRepository } from "../../../src/domain/todo";
 import { TodoNotFoundError } from "../../../src/domain/errors";
+import { getLogger } from "../../../src/utils/logger";
+
+const logger = getLogger("test", "error");
 
 describe("TodoMemoryAdapter", () => {
     let todoAdapter: TodoRepository;
 
     beforeEach(() => {
-        todoAdapter = initMemoryTodoAdapter();
+        todoAdapter = initMemoryTodoAdapter({ logger});
     });
 
     it("should create a todo", async () => {
