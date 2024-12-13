@@ -8,16 +8,19 @@ This is a simple todo service, following my version of clean architecture.
 - [x] add eslint and try to force project structure
 - [x] add unit tests
 - [x] add logs
-- [ ] handle errors
-- [ ] add observability
-- [ ] add metrics
-- [ ] would it be easier with Zod?
+- [ ] add observability (connect sentry)
+- [ ] add metrics (connect sentry)
+- [ ] handle errors (zod? Maybe monads?)
+  - [ ] would it be easier with Zod?
 - [ ] can we make things dependant to the env like AleF was showing me?
 - [ ] dockerize
 - [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
       maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that 
       we know that is not going to throw errors because we already validated and checked that path?
       The alternative is to move all the logic there (infra) and just pass (e.g. title) from the application to the infra
+
+- Same but for a frontend app (react ?) - do we use a diff framework to learn it?
+- Same but for a metaframewok app (nextjs ?) - do we use a diff framework to learn it?
 
 ## Code structure
 
