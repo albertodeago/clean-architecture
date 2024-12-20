@@ -8,12 +8,12 @@ This is a simple todo service, following my version of clean architecture.
 - [x] add eslint and try to force project structure
 - [x] add unit tests
 - [x] add logs
-- [ ] add observability (connect sentry)
-- [ ] add metrics (connect sentry)
+- [x] add observability (connect sentry)
+- [x] add metrics (connect sentry)
 - [ ] handle errors (zod? Maybe monads?) - should we only handle errors in the "main" or only in "use-cases", or what?
   - [ ] would it be easier with Zod?
 - [ ] can we make things dependant to the env like AleF was showing me?
-- [ ] dockerize
+- [x] dockerize
 - [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
       maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that 
       we know that is not going to throw errors because we already validated and checked that path?
