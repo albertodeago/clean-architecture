@@ -10,7 +10,7 @@ This is a simple todo service, following my version of clean architecture.
 - [x] add logs
 - [ ] add observability (connect sentry)
 - [ ] add metrics (connect sentry)
-- [ ] handle errors (zod? Maybe monads?)
+- [ ] handle errors (zod? Maybe monads?) - should we only handle errors in the "main" or only in "use-cases", or what?
   - [ ] would it be easier with Zod?
 - [ ] can we make things dependant to the env like AleF was showing me?
 - [ ] dockerize
@@ -33,6 +33,7 @@ Domain
 infrastructure:
 - they are the adapters, implement the interfaces/ports
 - everything that interacts with the outside world goes here (changing a db or something should be just a matter of changing an adapter)
+- ATM they are adapters for the domain (e.g. a pg implementation) and also for dependencies that I want to "encalpsulate" to make them easier to change (e.g. http server, maybe tomorrow we want hono instead of express)
 
 application:
 - use-cases, business logic
