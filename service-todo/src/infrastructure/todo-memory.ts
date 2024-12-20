@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { TodoNotFoundError } from "../domain/errors";
 import { TodoFactory } from "../domain/todo";
 
@@ -26,15 +27,18 @@ const initMemoryTodoAdapter = ({ logger }: { logger: Logger }): TodoRepository =
             return todoList.map(mapMemoryTodoToDomain);
         },
         createTodo: async (todo: { id: string, title: string }) => {
-            logger.info("createTodo", todo);
+            return Sentry.startSpan({ name: "todo-pg.createTodo"}, () => {
+                logger.info("createTodo", todo);
 
-            const domainTodo = TodoFactory(todo);
-            const memoryTodo = mapDomainTodoToMemory(domainTodo);
+                const domainTodo = TodoFactory(todo);
+                const memoryTodo = mapDomainTodoToMemory(domainTodo);
+                
+                logger.info("saved in memory", memoryTodo);
+                todoList.push(memoryTodo);
+                
+                return mapMemoryTodoToDomain(memoryTodo);
+            });
             
-            logger.info("saved in memory", memoryTodo);
-            todoList.push(memoryTodo);
-            
-            return mapMemoryTodoToDomain(memoryTodo);
         },
         getTodo: async (id: DomainTodo["id"]) => {
             logger.info("getTodo", id);

@@ -1,5 +1,6 @@
 import express from "express";
 import { TodoNotFoundError } from "../domain/errors";
+import * as Sentry from "@sentry/node"
 
 import type { Logger } from "../utils/logger";
 import type http from "http";
@@ -70,6 +71,23 @@ const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication:
                 res.status(500).send("Internal server error");
             }
         }
+    });
+
+    // This is just a fake route to test Sentry
+    app.get("/debug-sentry", function mainHandler(req, res) {
+        throw new Error("My first Sentry error!");
+    });
+
+    // The error handler must be registered before any other error middleware and after all controllers
+    Sentry.setupExpressErrorHandler(app);
+
+    // TODO: setup a 404 handler
+    // TODO: setup a error middleware
+    app.use(function onError(err, req, res, next) {
+        // The error id is attached to `res.sentry` to be returned
+        // and optionally displayed to the user for support.
+        res.statusCode = 500;
+        res.end(res.sentry + "\n");
     });
 
     return {

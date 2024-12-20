@@ -8,6 +8,10 @@ const validateLogLevel = (logLevel: string): logLevel is "debug" | "info" | "war
     return ["debug", "info", "warn", "error"].includes(logLevel);
 }
 
+const validateMonitoring = (dns?: string): dns is string => {
+    return typeof dns === "string" && dns.length > 0 && dns.startsWith("http");
+}
+
 export const getConfig = (): Config => {
 
     const logLevel = process.env.LOG_LEVEL || "info";
@@ -15,13 +19,24 @@ export const getConfig = (): Config => {
         throw new Error(`Invalid log level: ${logLevel}`);
     }
 
+    const monitoringDns = process.env.MONITORING_DNS;
+    if (!validateMonitoring(monitoringDns)) {
+        throw new Error("Monitoring DNS is required");
+    }
+
     return {
         port: Number(process.env.PORT) || DEFAULT_PORT,
         logLevel,
+        monitoring: {
+            dns: monitoringDns
+        }
     }
 }
 
 export type Config = {
+    monitoring: {
+        dns: string;
+    },
     port: number;
     logLevel: "debug" | "info" | "warn" | "error";
 }

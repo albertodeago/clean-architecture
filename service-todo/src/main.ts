@@ -1,3 +1,6 @@
+// we always need to import the instrumentation first
+import "./instrument.js";
+
 import { initHttpAdapter } from "./infrastructure/http";
 import { initMemoryTodoAdapter } from "./infrastructure/todo-memory";
 import { initTodoApplication } from "./application/todo";
