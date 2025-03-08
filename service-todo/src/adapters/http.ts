@@ -19,16 +19,20 @@ const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication:
     let server: http.Server
     app.use(express.json());
 
-    app.get("/todos", async (req, res) => {
+    app.get("/todos", async (_, res) => {
         logger.info("GET /todos");
         const todos = await todoApplication.listTodo();
         res.json(todos);
     });
 
-    app.post("/todos", async (req, res) => {
+    app.post("/todos", async (req, res, next) => {
         logger.info("POST /todos", req.body);
-        const todo = await todoApplication.createTodo(req.body);
-        res.json(todo);
+        try {
+            const todo = await todoApplication.createTodo(req.body);
+            res.json(todo);
+        } catch (error) {
+            next(error);
+        }
     });
 
     app.put("/todos/:id/toggle", async (req, res, next) => {
@@ -62,11 +66,11 @@ const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication:
     });
 
     // This is just a fake route to test Sentry
-    app.get("/debug-sentry", function mainHandler(req, res) {
+    app.get("/debug-sentry", function mainHandler() {
         throw new Error("My first Sentry error!");
     });
 
-    app.use(function notFoundHandler(req: Request, res: Response) {
+    app.use(function notFoundHandler(_: Request, res: Response) {
         res.status(404).send("Not found");
     })
 
@@ -74,16 +78,16 @@ const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication:
     Sentry.setupExpressErrorHandler(app);
 
     // Error handler middleware, beware that this is not catching thrown (and uncaught) errors, we should do that too but it's not the purpose of this example
-    app.use(function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+    app.use(function errorHandler(err: Error, _: Request, res: Response, next: NextFunction) {
         if (err instanceof TodoNotFoundError) {
-            res.status(404).send(err.message);
+            res.status(404).json({ error: err.message });
         } else {
             console.error(err.stack);
             // sentry middleware already logs the error on Sentry
             res.status(500).json({ error: 'Internal Server Error' });
         }
     })
-    
+
 
     return {
         run: () => {
@@ -96,5 +100,5 @@ const initHttpAdapter = ({ todoApplication, config, logger }: { todoApplication:
         }
     };
 }
-    
+
 export { initHttpAdapter }

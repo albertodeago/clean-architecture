@@ -9,19 +9,19 @@ const initPgTodo = (): TodoRepository => {
             throw new Error("Not implemented");
         },
         createTodo: async (todo: { id: string, title: string }) => {
-            console.log("[infrastructure][todo-pg] createTodo", todo);
+            console.log("[adapter][todo-pg] createTodo", todo);
             throw new Error("Not implemented");
         },
         getTodo: async (id: DomainTodo["id"]) => {
-            console.log("[infrastructure][todo-pg] getTodo", id);
+            console.log("[adapter][todo-pg] getTodo", id);
             throw new Error("Not implemented");
         },
         updateTodo: async (id: DomainTodo["id"], todo: DomainTodo) => {
-            console.log("[infrastructure][todo-pg] updateTodo", id, todo);
+            console.log("[adapter][todo-pg] updateTodo", id, todo);
             throw new Error("Not implemented");
         },
         deleteTodo: async (id: DomainTodo["id"]) => {
-            console.log("[infrastructure][todo-pg] deleteTodo", id);
+            console.log("[adapter][todo-pg] deleteTodo", id);
             throw new Error("Not implemented");
         }
     }

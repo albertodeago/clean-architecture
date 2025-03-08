@@ -23,9 +23,9 @@ const TodoFactory = (todo: Todo): DomainTodo => {
     }
 
     return {
-        id: todo.id, 
-        title: todo.title, 
-        isCompleted: todo.isCompleted ?? false, 
+        id: todo.id,
+        title: todo.title,
+        isCompleted: todo.isCompleted ?? false,
         isArchived: todo.isArchived ?? false,
     } as DomainTodo;
 }

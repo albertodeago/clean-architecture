@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { initHttpAdapter } from "../../../src/infrastructure/http";
+import { initHttpAdapter } from "../../../src/adapters/http";
 import { TodoNotFoundError } from "../../../src/domain/errors";
 
 import type { TodoApplication } from "../../../src/application/todo";
@@ -8,7 +8,7 @@ import { getLogger } from "../../../src/utils/logger";
 
 const logger = getLogger("test", "error");
 
-const mockConfig = { port: 3001, logLevel: "error" } satisfies Config;
+const mockConfig = { port: 3001, logLevel: "error", monitoring: {dns: ""} } satisfies Config;
 const mockTodoApplication = {
     listTodo: vi.fn(),
     createTodo: vi.fn(),
@@ -24,10 +24,10 @@ describe("HttpAdapter", () => {
     let httpAdapter: ReturnType<typeof initHttpAdapter>;
 
     beforeEach(async() => {
-        httpAdapter = initHttpAdapter({ 
-            todoApplication: mockTodoApplication, 
-            config: mockConfig, 
-            logger 
+        httpAdapter = initHttpAdapter({
+            todoApplication: mockTodoApplication,
+            config: mockConfig,
+            logger
         });
         await httpAdapter.run();
     });
@@ -113,7 +113,7 @@ describe("HttpAdapter", () => {
         });
         expect(response.ok).toBe(true);
         expect(mockTodoApplication.deleteTodo).toHaveBeenCalledOnce();
-    }); 
+    });
 
     it("returns a 404 if the todo to delete is not found", async () => {
         mockTodoApplication.deleteTodo.mockRejectedValueOnce(new TodoNotFoundError("Todo not found"));

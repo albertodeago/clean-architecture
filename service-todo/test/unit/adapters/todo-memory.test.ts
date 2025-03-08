@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { initMemoryTodoAdapter } from "../../../src/infrastructure/todo-memory";
+import { initMemoryTodoAdapter } from "../../../src/adapters/todo-memory";
 import { TodoRepository } from "../../../src/domain/todo";
 import { TodoNotFoundError } from "../../../src/domain/errors";
 import { getLogger } from "../../../src/utils/logger";
@@ -30,5 +30,5 @@ describe("TodoMemoryAdapter", () => {
         await expect(todoAdapter.getTodo("1")).rejects.toThrow(TodoNotFoundError);
     });
 
-    
+
 });

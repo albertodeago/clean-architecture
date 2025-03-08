@@ -15,7 +15,7 @@ This is a simple todo service, following my version of clean architecture.
 - [ ] can we make things dependant to the env like AleF was showing me?
 - [x] dockerize
 - [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
-      maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that 
+      maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that
       we know that is not going to throw errors because we already validated and checked that path?
       The alternative is to move all the logic there (infra) and just pass (e.g. title) from the application to the infra
 
@@ -30,8 +30,8 @@ Domain
 - interfaces (ports)
 - they do not depend on anything (no imports from other folders)
 
-infrastructure:
-- they are the adapters, implement the interfaces/ports
+Adapters:
+- implement the interfaces/ports (they also called `infrastructure` sometimes)
 - everything that interacts with the outside world goes here (changing a db or something should be just a matter of changing an adapter)
 - ATM they are adapters for the domain (e.g. a pg implementation) and also for dependencies that I want to "encalpsulate" to make them easier to change (e.g. http server, maybe tomorrow we want hono instead of express)
 

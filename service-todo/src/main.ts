@@ -1,8 +1,8 @@
 // we always need to import the instrumentation first
 import "./instrument.js";
 
-import { initHttpAdapter } from "./infrastructure/http";
-import { initMemoryTodoAdapter } from "./infrastructure/todo-memory";
+import { initHttpAdapter } from "./adapters/http";
+import { initMemoryTodoAdapter } from "./adapters/todo-memory";
 import { initTodoApplication } from "./application/todo";
 import { getConfig } from "./config";
 import { getLogger } from "./utils/logger";
@@ -17,11 +17,11 @@ const main = async () => {
 
     // create infrastructure / adapters
     const todoRepository = initMemoryTodoAdapter({ logger: logger.getChild("todoRepository") });
-    
+
     // create application / use-cases
     const todoApplication = initTodoApplication({ todoRepository, logger: logger.getChild("todoApplication") });
-    
-    // create other infrastructure, the one that needs the application
+
+    // create other infrastructure, the one that needs the app
     const httpAdapter = initHttpAdapter({ todoApplication, config, logger: logger.getChild("httpAdapter") });
 
     httpAdapter.run();

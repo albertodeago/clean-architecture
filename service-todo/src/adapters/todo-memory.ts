@@ -6,7 +6,7 @@ import type { DomainTodo, TodoRepository } from "../domain/todo";
 import type { Logger } from "../utils/logger";
 
 /**
- * Infrastructure (adapters) is responsible for implementing a Port (interface between domain and outside world)
+ * Adapters are responsible for implementing Ports (interface between domain and outside world)
  * Adapters can have different types compared to the domain ones, they then map between the two
  * (for example a Todo stored in a database has a different type than the domain Todo, can have the _id field specific to the database)
  * Here we also do validation and map outside world data to domain model -> TODO: is this correct?
@@ -27,23 +27,23 @@ const initMemoryTodoAdapter = ({ logger }: { logger: Logger }): TodoRepository =
             return todoList.map(mapMemoryTodoToDomain);
         },
         createTodo: async (todo: { id: string, title: string }) => {
-            return Sentry.startSpan({ name: "todo-pg.createTodo"}, () => {
+            return Sentry.startSpan({ name: "todo-pg.createTodo"}, () => {
                 logger.info("createTodo", todo);
 
                 const domainTodo = TodoFactory(todo);
                 const memoryTodo = mapDomainTodoToMemory(domainTodo);
-                
+
                 logger.info("saved in memory", memoryTodo);
                 todoList.push(memoryTodo);
-                
+
                 return mapMemoryTodoToDomain(memoryTodo);
             });
-            
+
         },
         getTodo: async (id: DomainTodo["id"]) => {
             logger.info("getTodo", id);
             const t = todoList.find((t) => t.id === id);
-            
+
             if (!t) {
                 // TODO: is error handling correct here?
                 // it should be useless, if we reach here the getTodo should have thrown an error
@@ -93,8 +93,8 @@ const mapDomainTodoToMemory = (todo: DomainTodo): MemoryTodo => {
     }
 }
 
-export { 
-    initMemoryTodoAdapter, 
-    mapMemoryTodoToDomain, 
-    mapDomainTodoToMemory 
+export {
+    initMemoryTodoAdapter,
+    mapMemoryTodoToDomain,
+    mapDomainTodoToMemory
 }
