@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router'
-import './index.css'
-import App from './App.tsx'
+import './ui/index.css'
+import App from './ui/App.tsx'
 
 // TODO: move it to a separate file
 const NotFound = () => <h1>Not Found</h1>

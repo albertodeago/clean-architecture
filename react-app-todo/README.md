@@ -6,7 +6,7 @@ Started from a vite template with react, typescript and react-router v7 (client-
 ## TODO
 
 - [ ] setup react-query and use it for fetching data (should be encapsulated in a data-layer or an adapter)
-- [ ] setup vitest
+- [x] setup vitest
 - [ ] setup domain/ports/adapters structure
   - [ ] setup a simple in-memory adapters for todos
   - [ ] implement the domain logic
