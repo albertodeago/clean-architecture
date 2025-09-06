@@ -11,7 +11,7 @@ import {
 } from "../../domain/todo";
 import { z } from "zod";
 import type { ConfigEnv } from "@/config";
-// import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/node";
 
 type Application = {
 	start: () => void;
@@ -22,7 +22,6 @@ export const makeHttpApplication = ({
 }: {
 	env: TodoEnv & LoggerEnv & ConfigEnv;
 }): Application => {
-	// TODO: where do we get the port of the application, we should create a config and reads from ENV and safeParse it
 	const { logger } = env;
 	const app = express();
 	app.use(express.json());
@@ -37,32 +36,28 @@ export const makeHttpApplication = ({
 	app.delete("/todos/:id", makeDeleteTodoHandler(env));
 
 	// // This is just a fake route to test Sentry
-	// app.get("/debug-sentry", function mainHandler() {
-	// 	throw new Error("My first Sentry error!");
-	// });
+	app.get("/debug-sentry", function mainHandler() {
+		throw new Error("My first Sentry error!");
+	});
 
 	app.use(function notFoundHandler(_: express.Request, res: express.Response) {
 		res.status(404).send("Not found");
 	});
 
 	// // The error handler must be registered before any other error middleware and after all controllers
-	// Sentry.setupExpressErrorHandler(app);
+	Sentry.setupExpressErrorHandler(app);
 
 	// // Error handler middleware, beware that this is not catching thrown (and uncaught) errors, we should do that too but it's not the purpose of this example
-	// app.use(function errorHandler(
-	// 	err: Error,
-	// 	_: Request,
-	// 	res: Response,
-	// 	next: NextFunction,
-	// ) {
-	// 	if (err instanceof TodoNotFoundError) {
-	// 		res.status(404).json({ error: err.message });
-	// 	} else {
-	// 		console.error(err.stack);
-	// 		// sentry middleware already logs the error on Sentry
-	// 		res.status(500).json({ error: "Internal Server Error" });
-	// 	}
-	// });
+	app.use(function errorHandler(
+		err: Error,
+		_: express.Request,
+		res: express.Response,
+		_next: express.NextFunction,
+	) {
+		env.logger.error("Error handler caught error:", err);
+		// sentry middleware already logs the error on Sentry
+		res.status(500).json({ error: "Internal Server Error" });
+	});
 
 	return {
 		start: () => {

@@ -8,10 +8,10 @@ This is a simple todo service, following my version of clean architecture.
 - [ ] add eslint and try to force project structure
 - [x] add unit tests
 - [x] add logs
-- [ ] add observability (connect sentry)
-- [ ] add metrics (connect sentry)
-- [ ] catch all errors in express to easier observability?
-- [ ] dockerize
+- [x] add observability (connect sentry)
+- [x] add metrics (connect sentry)
+- [x] catch all errors in express to easier observability?
+- [x] dockerize
 
 - Same but for a frontend app (react ?) - do we use a diff framework to learn it?
 - Same but for a metaframewok app (nextjs ?) - do we use a diff framework to learn it?

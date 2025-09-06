@@ -1,4 +1,3 @@
-// import * as Sentry from "@sentry/node";
 import * as R from "../../domain/result";
 import { TodoNotFoundError, type Todo, type TodoEnv } from "../../domain/todo";
 import type { LoggerEnv } from "@/domain/logger";

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const ConfigSchema = z.object({
 	PORT: z.coerce.number().min(1).max(65535),
-	// MONITORING_DNS: z.string().url().optional(),
+	MONITORING_DNS: z.url().optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;
