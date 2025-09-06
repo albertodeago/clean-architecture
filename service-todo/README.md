@@ -5,7 +5,7 @@ This is a simple todo service, following my version of clean architecture.
 ## TODO
 
 - [x] fully implement CRUD and use-cases to see how it fits
-- [ ] add eslint and try to force project structure
+- [x] add eslint and try to force project structure
 - [x] add unit tests
 - [x] add logs
 - [x] add observability (connect sentry)
