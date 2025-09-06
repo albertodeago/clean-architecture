@@ -5,40 +5,76 @@ This is a simple todo service, following my version of clean architecture.
 ## TODO
 
 - [x] fully implement CRUD and use-cases to see how it fits
-- [x] add eslint and try to force project structure
+- [ ] add eslint and try to force project structure
 - [x] add unit tests
 - [x] add logs
-- [x] add observability (connect sentry)
-- [x] add metrics (connect sentry)
-- [ ] handle errors (zod? Maybe monads?) - should we only handle errors in the "main" or only in "use-cases", or what?
-  - [ ] would it be easier with Zod?
-- [ ] can we make things dependant to the env like AleF was showing me?
-- [x] dockerize
-- [ ] can we remove useless checks in todo-memory if we switch to a fp-ts approach of error handling?
-      maybe we can have methods that return a "safeTodo" or something, to specify in a typed way that
-      we know that is not going to throw errors because we already validated and checked that path?
-      The alternative is to move all the logic there (infra) and just pass (e.g. title) from the application to the infra
+- [ ] add observability (connect sentry)
+- [ ] add metrics (connect sentry)
+- [ ] catch all errors in express to easier observability?
+- [ ] dockerize
 
 - Same but for a frontend app (react ?) - do we use a diff framework to learn it?
 - Same but for a metaframewok app (nextjs ?) - do we use a diff framework to learn it?
 
 ## Code structure
 
-Domain
-- models
-- errors
-- interfaces (ports)
-- they do not depend on anything (no imports from other folders)
+- src/domain
+Contains the business logic of the application. it **must** be independent from specific technologies or frameworks.
+It can contains single files or folders (only if complexity requires it).
+Every file should be named after the entity it represents (e.g. `todo.ts` for a todo entity) and it exports:
+  - the TypeScript types needed to model the entity
+  - a Typescript type that represent the domain ports (interfaces) needed to interact with the entity
+  - Functions that represents the use-cases that can be performed on the entity (e.g. `createTodo`, `deleteTodo`, etc.). The use-case is what must be used by the application layer to interact with the entity. The use-cases must use currying to receive the input data as first arguments and the environment (implementation of ports) as the last argument.
+  - Errors that can be *returned* (not thrown) by the use-cases (e.g. `TodoNotFoundError`)
+- src/adapters
+Contains the implementations of the domain ports (interfaces). It must be independent from the application layer.
+It must be organized in folders that represent the technology or framework used (e.g. `pg`, `memory`, `http`, etc.).
+Each folder should contain a file named after the entity it implements (e.g. `todo-pg.ts` for a todo entity using Postgres) and it *can* contain
+other files if complexity requires it (for example to implement common utilities for the specific technology).
+- src/env
+Env is a container of adapters, basically is what the entire application will use to interact with the outside world.
+- src/main
+It creates the environment (the adapters) and connects everything together.
+It must be as simple as possible and it should not contain any business logic.
 
-Adapters:
-- implement the interfaces/ports (they also called `infrastructure` sometimes)
-- everything that interacts with the outside world goes here (changing a db or something should be just a matter of changing an adapter)
-- ATM they are adapters for the domain (e.g. a pg implementation) and also for dependencies that I want to "encalpsulate" to make them easier to change (e.g. http server, maybe tomorrow we want hono instead of express)
+### Error handling
+We discourage the usage of exceptions for error handling. Instead, we suggest to use a simple Result<T, E> type (implemented in the `domain/result`).
+The domain exports also a TryCatch<T, E> type that can be used to wrap functions that can throw exceptions and convert them to Result<T, E>.
 
-application:
-- use-cases, business logic
-- they accept the ports in input (then they receive adapters as implementations) and use them to achieve their goals
+### Testing
+Tests must be as simple as possible and must leverage dependency injection to mock dependencies (whenever possible).
 
-main:
-- read config / env
-- create the adapters and pass them to the services
+## How to try
+
+Insert a todo:
+```bash
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"title": "xyz"}' \
+  http://localhost:3000/todos
+```
+
+List todos:
+```bash
+curl http://localhost:3000/todos
+```
+
+Get a todo:
+```bash
+curl http://localhost:3000/todos/{id}
+```
+
+Update a todo:
+```bash
+curl --header "Content-Type: application/json" \
+  --request PUT \
+  --data '{"title": "new title", "isCompleted": true, "isArchived": false}' \
+  http://localhost:3000/todos/{id}
+```
+
+Delete a todo:
+```bash
+curl --header "Content-Type: application/json" \
+  --request DELETE \
+  http://localhost:3000/todos/{id}
+```

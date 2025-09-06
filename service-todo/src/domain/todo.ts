@@ -1,45 +1,83 @@
-import type { Brand } from "../utils/types";
-import { InputParseError } from "./errors";
+import type { Result } from "./result";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TodoBrand = Symbol("Todo");
+/**
+ * Domain Entity
+ */
+export type Todo = {
+	id: string;
+	title: string;
+	isCompleted?: boolean;
+	isArchived?: boolean;
+};
 
-type Todo = {
-    id: string;
-    title: string;
-    isCompleted?: boolean;
-    isArchived?: boolean;
-}
+/**
+ * Port / Interface for the Todo domain
+ */
+export type TodoEnv = {
+	todoRepository: {
+		listTodo: () => Promise<Result<Todo[]>>;
+		createTodo: (todo: { title: string }) => Promise<Result<Todo>>;
+		updateTodo: (id: Todo["id"], todo: Todo) => Promise<Result<Todo>>;
+		deleteTodo: (id: Todo["id"]) => Promise<Result<Todo>>;
+		getTodo: (id: Todo["id"]) => Promise<Result<Todo>>;
+	};
+};
 
-type DomainTodo = Brand<Todo, typeof TodoBrand>
+/**
+ * Domain Errors
+ */
+export const TodoNotFoundError = class extends Error {
+	constructor(message: string, options?: ErrorOptions) {
+		super(message, options);
+		this.name = "TodoNotFoundError";
+	}
+};
 
-const TodoFactory = (todo: Todo): DomainTodo => {
-    // TODO: this validation would be a lot easier with Zod or something
-    if (typeof todo.id !== "string" || todo.id.length === 0) {
-        throw new InputParseError("Invalid todo id");
-    }
-    if (typeof todo.title !== "string" || todo.title.length === 0) {
-        throw new InputParseError("Invalid todo title");
-    }
+/**
+ * Use-cases
+ *
+ * They are stupid because at the moment the application is a "dumb" one and just do a
+ * pass-through to the repository.
+ * In a real-world app, the application would have more logic to handle business rules (and it would be here).
+ */
+export const listTodo =
+	() =>
+	(env: TodoEnv): Promise<Result<Todo[]>> => {
+		return env.todoRepository.listTodo();
+	};
+export const createTodo =
+	(partialTodo: { title: string }) =>
+	(env: TodoEnv): Promise<Result<Todo>> => {
+		return env.todoRepository.createTodo(partialTodo);
+	};
+export const updateTodo =
+	(id: Todo["id"], updated: Todo) =>
+	(env: TodoEnv): Promise<Result<Todo>> => {
+		return env.todoRepository.updateTodo(id, updated);
+	};
+export const deleteTodo =
+	(id: Todo["id"]) =>
+	(env: TodoEnv): Promise<Result<Todo>> => {
+		return env.todoRepository.deleteTodo(id);
+	};
+export const getTodo =
+	(id: Todo["id"]) =>
+	(env: TodoEnv): Promise<Result<Todo>> => {
+		return env.todoRepository.getTodo(id);
+	};
 
-    return {
-        id: todo.id,
-        title: todo.title,
-        isCompleted: todo.isCompleted ?? false,
-        isArchived: todo.isArchived ?? false,
-    } as DomainTodo;
-}
+export const toggleTodo =
+	(id: Todo["id"]) =>
+	async (env: TodoEnv): Promise<Result<Todo>> => {
+		const todoResult = await env.todoRepository.getTodo(id);
+		if (!todoResult.success) {
+			return todoResult;
+		}
 
-// port to define how to interact with the Domain
-interface TodoRepository {
-    listTodo: () => Promise<DomainTodo[]>;
-    createTodo: (todo: { id: string, title: string }) => Promise<DomainTodo>;
-    updateTodo: (id: DomainTodo["id"], todo: DomainTodo) => Promise<DomainTodo>;
-    deleteTodo: (id: DomainTodo["id"]) => Promise<DomainTodo>;
-    getTodo: (id: DomainTodo["id"]) => Promise<DomainTodo>;
-}
-
-export type { DomainTodo, TodoRepository };
-
-export { TodoFactory };
-
+		const todo = todoResult.data;
+		const updateResult = await env.todoRepository.updateTodo(id, {
+			...todo,
+			isCompleted: !todo.isCompleted,
+		});
+		return updateResult;
+	};
