@@ -52,7 +52,6 @@ export const makeHttpApplication = ({
 		err: Error,
 		_: express.Request,
 		res: express.Response,
-		_next: express.NextFunction,
 	) {
 		env.logger.error("Error handler caught error:", err);
 		// sentry middleware already logs the error on Sentry
